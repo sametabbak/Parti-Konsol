@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f1a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>PartiKonsol — Kumanda</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    html, body { overflow: hidden; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .view { position: fixed; inset: 0; display: none; flex-direction: column; padding: max(18px, env(safe-area-inset-top)) 20px max(18px, env(safe-area-inset-bottom)); }
+    .view.on { display: flex; }
+    .center { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+    label { font-size: 14px; color: var(--muted); margin-bottom: -6px; }
+    input { width: 100%; padding: 16px 18px; border-radius: 14px; border: 2px solid var(--line); background: var(--bg2); color: var(--text); font-size: 20px; outline: none; }
+    input:focus { border-color: var(--accent); }
+    #codeIn { font-size: 40px; letter-spacing: 14px; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .err { color: var(--accent2); min-height: 22px; font-weight: 600; text-align: center; }
+    .me { display: flex; align-items: center; gap: 14px; padding: 14px; }
+    .me .av { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 22px; color: #0b0f1a; }
+    .menu { display: flex; flex-direction: column; gap: 12px; overflow: auto; }
+    .menu button { display: flex; align-items: center; gap: 14px; text-align: left; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--line); background: var(--panel); color: var(--text); }
+    .menu button .ic { font-size: 34px; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 12px; background: var(--bg2); }
+    .menu button:disabled { opacity: .4; }
+    .menu button:not(:disabled):active { border-color: var(--accent); transform: scale(.98); }
+    .big-msg { font-size: 26px; font-weight: 800; text-align: center; }
+    #padView { padding: 0; background: #05070d; }
+    #padHud { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 0; right: 0; text-align: center; font-weight: 800; font-size: 20px; pointer-events: none; z-index: 2; }
+    #padHud small { display: block; font-weight: 500; font-size: 13px; color: var(--muted); }
+    #pad { width: 100%; height: 100%; touch-action: none; display: block; }
+    .toast { position: fixed; left: 16px; right: 16px; bottom: 24px; background: var(--panel); border: 1px solid var(--line); padding: 14px; border-radius: 14px; text-align: center; font-weight: 700; z-index: 9; transition: opacity .3s; }
+  </style>
+</head>
+<body>
+  <!-- Katılım -->
+  <section class="view on" id="joinView">
+    <div class="brand" style="justify-content:center;margin-top:10px"><span class="dot"></span>PartiKonsol</div>
+    <div class="center">
+      <label for="codeIn">Ekrandaki kod</label>
+      <input id="codeIn" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="····">
+      <label for="nameIn">Adın</label>
+      <input id="nameIn" maxlength="14" autocomplete="nickname" placeholder="ör. Samet">
+      <button class="btn block" id="joinBtn" style="margin-top:8px;padding:18px">Katıl</button>
+      <div class="err" id="joinErr"></div>
+    </div>
+  </section>
+
+  <!-- Lobi / menü -->
+  <section class="view" id="menuView">
+    <div class="card me">
+      <div class="av" id="meAv"></div>
+      <div><div style="font-weight:800;font-size:20px" id="meName"></div><div class="muted" id="meRole"></div></div>
+    </div>
+    <h3 style="margin:22px 0 12px" id="menuTitle">Oyun seç</h3>
+    <div class="menu" id="menu"></div>
+    <div class="center" id="waitBox" style="display:none">
+      <div class="big-msg">Ekrana bak 👀</div>
+      <div class="muted" style="text-align:center">👑 Yönetici oyunu seçiyor…</div>
+    </div>
+  </section>
+
+  <!-- Masa hokeyi pad -->
+  <section class="view" id="padView">
+    <div id="padHud"><span id="hudScore">0 – 0</span><small id="hudOpp"></small></div>
+    <canvas id="pad"></canvas>
+  </section>
+
+  <!-- Mesaj / oyun sonu -->
+  <section class="view" id="msgView">
+    <div class="center" style="align-items:stretch;text-align:center">
+      <div class="big-msg" id="msgTitle"></div>
+      <div class="muted" id="msgText" style="font-size:18px"></div>
+      <div id="msgButtons" style="display:flex;flex-direction:column;gap:12px;margin-top:18px"></div>
+    </div>
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/controller.js"></script>
+</body>
+</html>

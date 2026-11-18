@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PartiKonsol — Ekranın konsol, telefonun kumanda</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="landing">
+  <header>
+    <div class="brand"><span class="dot"></span>PartiKonsol</div>
+    <a class="btn ghost" href="/katil">Telefonla katıl</a>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Ekranın <span>konsol</span>,<br>telefonun <span>kumanda</span>.</h1>
+      <p class="lead">Bilgisayarda ya da televizyonda oyunu başlat, arkadaşların telefonlarıyla kodu girsin, birlikte oynayın. Kurulum yok, ek donanım yok.</p>
+      <div class="mobile-join" style="margin-top:24px">
+        <a class="btn pink" href="/katil">📱 Kumanda olarak katıl</a>
+      </div>
+    </div>
+    <div class="power-wrap">
+      <button class="power" id="start" aria-label="Konsolu başlat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v9"/><path d="M6.3 6.6a8 8 0 1 0 11.4 0"/></svg>
+        BAŞLA
+      </button>
+      <span class="muted">Büyük ekranda bas</span>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="card step"><b>1</b><h3 style="margin:4px 0">Ekranda başlat</h3><div class="muted">Bilgisayarda “Başla”ya bas, ekranda 4 haneli bir kod ve QR çıkar.</div></div>
+    <div class="card step"><b>2</b><h3 style="margin:4px 0">Telefonla bağlan</h3><div class="muted">QR’ı okut ya da telefonda bu siteyi açıp kodu gir. Uygulama gerekmez.</div></div>
+    <div class="card step"><b>3</b><h3 style="margin:4px 0">Oyunu seç, oyna</h3><div class="muted">İlk katılan oyuncu yönetici olur ve oyunu telefonundan seçer.</div></div>
+  </section>
+
+  <section class="games-section">
+    <h2>Oyunlar</h2>
+    <div class="game-grid" id="games"></div>
+  </section>
+</div>
+
+<script type="module">
+  import { GAMES } from '/js/games.js';
+  const isPhone = matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 600;
+  document.getElementById('start').onclick = () => {
+    if (isPhone && !confirm('Telefondasın. Bu cihazı ekran olarak mı açmak istiyorsun? (Kumanda için "Tamam" yerine "İptal"e bas.)')) {
+      location.href = '/katil'; return;
+    }
+    location.href = '/screen.html';
+  };
+  document.getElementById('games').innerHTML = GAMES.map(g => `
+    <div class="card game-card ${g.available ? '' : 'soon'}">
+      <div class="thumb" style="background:${g.bg}">${g.icon}</div>
+      ${g.available ? '' : '<span class="tag">Yakında</span>'}
+      <div class="info"><h3>${g.name}</h3><div class="muted">${g.players}</div></div>
+    </div>`).join('');
+</script>
+</body>
+</html>
